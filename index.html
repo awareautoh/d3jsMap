@@ -1,0 +1,44 @@
+<html lang="en">
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.js"></script>
+<style type="text/css">
+  .province:hover{
+    fill: red;
+    cursor: pointer;
+
+  }
+</style>
+<body>
+<svg></svg>
+<script>
+
+var map = d3.json('https://raw.githubusercontent.com/awareautoh/d3map/main/LAO_ADM1.json')
+
+Promise.all([map]).then(data => {
+  var height = 400;
+  var width  = 300;
+  var mapData = data[0]
+
+  var geoData = topojson.feature(mapData, mapData.objects["LAO_ADM1"]).features
+  
+  var projection = d3.geoMercator()
+      .fitSize([width, height], {type:"FeatureCollection", features: geoData})
+	
+	
+  var path = d3.geoPath()
+      .projection(projection)
+
+  d3.select('svg')
+    .attr('height', height)
+    .attr('width', width)
+    .selectAll('.county1')
+      .data(geoData)
+      .enter()
+      .append('path')
+        .classed('.county1', true)
+        .attr('d', path)
+    .attr('class','province')
+
+})
+
+</script>
